@@ -1,1 +1,0 @@
-# Teste-new-bug-by-BRUTON
