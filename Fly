@@ -1,0 +1,148 @@
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local player = game.Players.LocalPlayer
+
+pcall(function()
+    local argsName = {"RolePlayName", "سكربت طيران بروتون"}
+    game:GetService("ReplicatedStorage"):WaitForChild("RE"):WaitForChild("1RPNam1eTex1t"):FireServer(unpack(argsName))
+end)
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "BrutonGui"
+ScreenGui.Parent = game:GetService("CoreGui")
+ScreenGui.ResetOnSpawn = false
+
+local Frame = Instance.new("Frame")
+Frame.Name = "MainFrame"
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Frame.BackgroundTransparency = 0.2
+Frame.Position = UDim2.new(0.100320168, 0, 0.379746825, 0) 
+Frame.Size = UDim2.new(0, 190, 0, 57)
+Frame.Active = true
+Frame.Draggable = true
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = Frame
+
+local ImageLabel = Instance.new("ImageLabel")
+ImageLabel.Parent = Frame
+ImageLabel.Size = UDim2.new(1, 0, 1, 0)
+ImageLabel.Image = "rbxassetid://136864360355331"
+ImageLabel.BackgroundTransparency = 1
+ImageLabel.ImageTransparency = 0.5
+ImageLabel.ScaleType = Enum.ScaleType.Crop
+Instance.new("UICorner", ImageLabel).CornerRadius = UDim.new(0, 10)
+
+local UIStroke = Instance.new("UIStroke")
+UIStroke.Parent = Frame
+UIStroke.Thickness = 2.5
+UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+local UIGradient = Instance.new("UIGradient")
+UIGradient.Parent = UIStroke
+UIGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(80, 80, 80)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0))
+})
+RunService.RenderStepped:Connect(function() UIGradient.Rotation = (UIGradient.Rotation + 1.5) % 360 end)
+
+local function createBtn(name, text, pos, size)
+    local btn = Instance.new("TextButton")
+    btn.Name = name
+    btn.Parent = Frame
+    btn.Size = size
+    btn.Position = pos
+    btn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    btn.BackgroundTransparency = 0.6
+    btn.Text = text
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Font = Enum.Font.SourceSansBold
+    btn.TextSize = 18
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
+    return btn
+end
+
+local up = createBtn("subir", "↑", UDim2.new(0, 2, 0, 2), UDim2.new(0, 40, 0, 24))
+local down = createBtn("descer", "↓", UDim2.new(0, 2, 0, 30), UDim2.new(0, 40, 0, 24))
+local plus = createBtn("mais", "+", UDim2.new(0.24, 0, 0, 2), UDim2.new(0, 40, 0, 24))
+local mine = createBtn("mine", "-", UDim2.new(0.24, 0, 0, 30), UDim2.new(0, 40, 0, 24))
+
+local speedLabel = Instance.new("TextLabel")
+speedLabel.Parent = Frame
+speedLabel.Size = UDim2.new(0, 40, 0, 24)
+speedLabel.Position = UDim2.new(0.47, 0, 0, 30)
+speedLabel.BackgroundTransparency = 0.6
+speedLabel.BackgroundColor3 = Color3.fromRGB(0,0,0)
+speedLabel.Text = "1"
+speedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+speedLabel.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", speedLabel).CornerRadius = UDim.new(0, 4)
+
+local TextLabel = Instance.new("TextLabel")
+TextLabel.Parent = Frame
+TextLabel.Size = UDim2.new(0, 75, 0, 24)
+TextLabel.Position = UDim2.new(0.47, 0, 0, 2)
+TextLabel.BackgroundTransparency = 0.6
+TextLabel.BackgroundColor3 = Color3.fromRGB(0,0,0)
+TextLabel.Text = "BRUTON"
+TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", TextLabel).CornerRadius = UDim.new(0, 4)
+
+local onof = createBtn("ativarDesativar", "Fly", UDim2.new(0.70, 0, 0, 30), UDim2.new(0, 53, 0, 24))
+
+local close = createBtn("CloseBtn", "X", UDim2.new(1, -28, 0, 2), UDim2.new(0, 24, 0, 24))
+
+local speeds = 1
+local nowe = false
+local bv, bg
+
+onof.MouseButton1Down:connect(function()
+    nowe = not nowe
+    local char = player.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+    if nowe then
+        bv = Instance.new("BodyVelocity", root)
+        bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+        bg = Instance.new("BodyGyro", root)
+        bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+        bg.P = 15000
+        char.Humanoid.PlatformStand = true
+        spawn(function()
+            while nowe do
+                RunService.RenderStepped:Wait()
+                local cam = workspace.CurrentCamera
+                bv.Velocity = (char.Humanoid.MoveDirection.Magnitude > 0) and (cam.CFrame.LookVector * (speeds * 10)) or Vector3.new(0,0,0)
+                bg.CFrame = cam.CFrame
+            end
+            if bv then bv:Destroy() end
+            if bg then bg:Destroy() end
+            char.Humanoid.PlatformStand = false
+        end)
+    end
+end)
+
+plus.MouseButton1Down:connect(function() speeds = speeds + 1 speedLabel.Text = speeds end)
+mine.MouseButton1Down:connect(function() if speeds > 1 then speeds = speeds - 1 speedLabel.Text = speeds end end)
+
+up.MouseButton1Down:Connect(function() 
+    local active = true
+    spawn(function() while active do RunService.Heartbeat:Wait() player.Character.HumanoidRootPart.CFrame *= CFrame.new(0, 1.5, 0) end end)
+    up.MouseButton1Up:Wait() active = false
+end)
+
+down.MouseButton1Down:Connect(function() 
+    local active = true
+    spawn(function() while active do RunService.Heartbeat:Wait() player.Character.HumanoidRootPart.CFrame *= CFrame.new(0, -1.5, 0) end end)
+    down.MouseButton1Up:Wait() active = false
+end)
+
+Frame.Position = UDim2.new(-0.3, 0, 0.379746825, 0)
+Frame:TweenPosition(UDim2.new(0.100320168, 0, 0.379746825, 0), "Out", "Back", 0.8)
+
+close.MouseButton1Click:Connect(function()
+    Frame:TweenPosition(UDim2.new(-0.3, 0, 0.379746825, 0), "In", "Back", 0.5, true, function() ScreenGui:Destroy() end)
+end)
